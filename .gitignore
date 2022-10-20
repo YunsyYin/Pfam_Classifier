@@ -1,21 +1,2 @@
 # Environment
 .venv
-
-# Models
-trained_models
-trained_models_history
-trained_models_for_evaluation
-
-# Tools
-output_examples
-output_evaluations
-
-# Archived
-archived
-
-# Pycache
-scripts/__pycache__
-
-# Output files
-statistics_output
-evaluation_output
