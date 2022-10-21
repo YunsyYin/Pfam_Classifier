@@ -11,17 +11,17 @@ The aim of this notebook is to create a protein classifier that predicts the Pfa
 
 **Observations**
 
-The Pfam database involves over a million samples and 17,929 protein family categories, bringing the Pfam classification task closer to extreme multi-label classification (XMLC).
-The protein family labels involved in the development and testing set are all included in the train set.
-The distribution of training instances among protein family labels exhibits a long tail (tail labels), suggesting that a large proportion of labels have a small number of instances (79% of labels have less than 100 training instances).
+* The Pfam database involves over a million samples and 17,929 protein family categories, bringing the Pfam classification task closer to extreme multi-label classification (XMLC).
+* The protein family labels involved in the development and testing set are all included in the train set.
+* The distribution of training instances among protein family labels exhibits a long tail (tail labels), suggesting that a large proportion of labels have a small number of instances (79% of labels have less than 100 training instances).
 
 **Solutions**
 
-As there are only a few training instances in the tail labels, a pre-trained bidirectional Transformer for protein language representation could be a suitable solution as it can achieve good performance with fewer instances.
+* As there are only a few training instances in the tail labels, a pre-trained bidirectional Transformer for protein language representation could be a suitable solution as it can achieve good performance with fewer instances.
 
-Furthermore, attention-based Transformer models have been shown to capture features of connecting residues that are far apart in the underlying sequence but spatially close in the 3D structure (Vig et al., 2020), which makes it ideal for classifying protein families based on not only sequence similarity but also structural similarity.
+* Furthermore, attention-based Transformer models have been shown to capture features of connecting residues that are far apart in the underlying sequence but spatially close in the 3D structure (Vig et al., 2020), which makes it ideal for classifying protein families based on not only sequence similarity but also structural similarity.
 
-However, considering the limitation of computing power, only some protein families and related instances are selected for model demonstration. The selection criteria are as follows:
+* However, considering the limitation of computing power, only some protein families and related instances are selected for model demonstration. The selection criteria are as follows:
 
 > 1. Keep the Pfam families included in all splits.
 > 2. Pfam families with only a small number of training instances that may not be representative enough are temporarily ignored.
@@ -43,20 +43,20 @@ Several Transformer-based models have been presented in recent years, including 
 The encoder-only ProtT5-XL-UniRef50 model also provides both global prediction (per-protein level) and local prediction (per-residue level). While global prediction outputs embeddings through average pooling over the entire protein sequence, in local prediction, per-residue embeddings are fed into a two-layer convolutional neural network (CNN) for secondary structure prediction. Therefore, two different protein structure information, primary sequence embedding and residue-based secondary structure prediction will serve as input to the downstream classification neural network.
 
 The schematic of the experimental design:
-<p align="center"><img width="50%" src="public/experimental_design.jpg" /></p>
+<p align="center"><img width="50%" src="experimental_design.jpg" /></p>
 
 
 ### Result analysis ###
 
 This experiment attempts to use sequences as model input and predict its Pfam family category. Considering the number of samples in most Pfam families is small, we use the pre-trained, Transformer-based protein language model for embedding prediction and the following classification task. Two levels of embedding predictions are employed, including sequence embedding that integrates information from the complete protein, and secondary structure prediction based on per-residue embeddings.
 
-In the classification task based on global sequence embeddings, the pre-trained language model gives an impressive performance on embedding prediction and the Pfam classification task (F1-score of 0.98), considering it performs the 1000-family prediction task with only 50 training instances per class.
+In the classification task based on global sequence embeddings, the pre-trained language model gives an impressive performance on embedding prediction and the Pfam classification task (F1-score of 0.97), considering it performs the 1000-family prediction task with only about 50 training instances per class.
 
 However, the class prediction using the secondary structure prediction obtains an F1-score of 0.86, with additional dropout layers added to the downstream model to cope with overfitting. This is unsirprising, as we can see in t-SNE projection, global sequence embeddings produce more visually separable clusters in 2D space compared to secondary structure prediction, especially when the number of Pfam classes increases dramatically (from previous test results, data not shown). The reasons may be as follows:
 
 1. The Transformer model's attention mechanism helps capture the dependencies of residues related to conserved motifs. As the global sequence embedding is derived from the average pooling of each residue embedding, it already contains protein spatial information
 
-T2. he output of secondary structure prediction is essentially like another set of sequences, except that the sequence composition is converted from amino acid residues to secondary structure abbreviations (alpha helices, beta sheets, and loops). Although the output result has simpler and clearer secondary structural information, it cannot keep leveraging transfer learning based on 45 million protein datasets in the subsequent classification task. It may require more data and a deeper downstream neural network.
+2. The output of secondary structure prediction is essentially like another set of sequences, except that the sequence composition is converted from amino acid residues to secondary structure abbreviations (alpha helices, beta sheets, and loops). Although the output result has simpler and clearer secondary structural information, it cannot keep leveraging transfer learning based on 45 million protein datasets in the subsequent classification task. It may require more data and a deeper downstream neural network.
 
 Finally, as the diversity and representativeness of sequence training instances are considered during sampling, the selected samples have a sequence length distribution highly similar to before sampling. Therefore, if the number of Pfam labels is scaled up when the computing power allows, the proposed model is still expected to provide high performance on the Pfam classification task.
 
