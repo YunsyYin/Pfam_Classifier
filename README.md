@@ -1,10 +1,11 @@
-## Pfam family classifier ##
+## Pfam protein family classifier ##
 
-The aim of this notebook is to create a protein classifier that predicts the Pfam family of each protein based on its amino acid sequence.
+Pfam Classifier predicts the Pfam family of proteins based on their amino acid sequences.
+
 
 ### Dataset ###
 
-[Pfam seed random split on Kaggle](https://www.kaggle.com/datasets/googleai/pfam-seed-random-split)
+[Pfam seed random split](https://www.kaggle.com/datasets/googleai/pfam-seed-random-split) on Kaggle
 
 
 ### Data analysis ###
